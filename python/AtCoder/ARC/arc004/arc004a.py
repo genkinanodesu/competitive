@@ -1,0 +1,11 @@
+import math
+N = int(input())
+#points = [(x座標0, y座標0),...,(x座標N-1, y座標N-1)]
+points=[list(map(int, input().split())) for i in range(N) ]
+
+ans = 0
+for i in range(N):
+    for j in range(i+1,N):
+        ans = max(ans, math.sqrt((points[i][0]-points[j][0])**2 + (points[i][1]-points[j][1])**2))
+
+print(ans)
