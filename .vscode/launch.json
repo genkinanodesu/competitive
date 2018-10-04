@@ -5,27 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Terminal (integrated)",
-            "type": "python",
-            "request": "launch",
-            "pythonPath": "${config:python.pythonPath}",
-            "stopOnEntry": true,
-            "program": "${file}",
-            "console": "none",
-            "cwd": "${workspaceFolder}"
-        },
-        {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/test.exe",
+            "program": "enter program name, for example ${workspaceFolder}/${filename}.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
-            "miDebuggerPath": "c:\\mingw\\bin\\gdb.exe",
+            "miDebuggerPath": "/path/to/gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
