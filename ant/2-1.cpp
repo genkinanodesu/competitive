@@ -4,8 +4,8 @@ using namespace std;
 /*
 templates for competitive programming
 type long long -> type ll 
-define constants such as EPS, INF, MOD, PI
-define macros such as REP, FOR, ALL, SORT, REVERSE
+define constants : EPS, INF, MOD, PI
+define macros : REP, FOR, ALL, SORT, REVERSE
 define number theory functions: qp(a, b), qp(a, b, mo), gcd(a, b)
 define dx, dy
 */
