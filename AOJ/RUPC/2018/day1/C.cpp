@@ -31,7 +31,29 @@ using namespace std;
    int dy[4]={0,1,0,-1};
 
 int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(0);
+    //input
+    ll n; cin >> n;
+    vector<ll> a(n); 
+    REP(i, n){
+        cin >> a[i];
+    }
+    
+    map<ll, ll> p;
+    map<ll, ll> q;
+    ll diff = 0;
+    REP(i, n){
+        if (a[i] != a[n - 1 - i]){
+            diff += 2 * (p[a[i]] - q[a[i]]) - 2 * (p[a[n - 1 - i]] - q[a[n - 1 - i]]) + 2;
+        }
+        if (diff == 0){
+            cout << i + 1;
+            if (i != n - 1){
+                cout << ' ';
+            }
+        }
+        p[a[i]] += 1;
+        q[a[n - 1 - i]] += 1;
+    }
+    cout << endl;
     return 0;
 }
