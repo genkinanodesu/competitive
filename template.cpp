@@ -2,9 +2,10 @@
 using namespace std;
 
    typedef long long ll;
+   typedef pair<ll, ll> P;
 
    const double EPS = (1e-7);
-   const ll INF =(1e9);
+   const ll INF =(1e13);
    const double PI = (acos(-1));
    const ll MOD = ll(1e9) + 7;
 
