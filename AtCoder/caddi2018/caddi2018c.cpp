@@ -2,7 +2,7 @@
 using namespace std;
 
    typedef long long ll;
-   typedef pair<ll, ll> P;
+   typedef pair<ll, ll> Pii;
 
    const double EPS = (1e-7);
    const ll INF =(1e13);
@@ -31,6 +31,32 @@ using namespace std;
    int dx[4]={1,0,-1,0};
    int dy[4]={0,1,0,-1};
 
+
+ll k, n;
+vector<ll> factorize(ll n){
+  //nの素因数の配列を返す
+  vector<ll> P = {};
+  ll i = 2;
+  while (i * i <= n){
+    if (n % i == 0){
+      P.pb(i);
+      n /= i;
+    }
+    else {i++;}
+  }
+  P.pb(n);
+  return P;
+}
+
 int main(){
-  
+  cin >> k >> n;
+  vector<ll> P = factorize(n);
+  set<ll> S(P.begin(), P.end());
+  ll ans = 1;
+  for (auto i = S.begin(); i != S.end(); i++){
+    ll cnt = upper_bound(P.begin(), P.end(), *i) - lower_bound(P.begin(), P.end(), *i);
+    ans *= pow(*i, cnt / k);
+  }
+  cout << ans << endl;
+
 }
