@@ -2,7 +2,7 @@
 using namespace std;
 
    typedef long long ll;
-   typedef pair<ll, ll> Pii;
+   typedef pair<ll, ll> P;
 
    const double EPS = (1e-7);
    const ll INF =(1e13);
@@ -31,47 +31,52 @@ using namespace std;
    int dx[4]={1,0,-1,0};
    int dy[4]={0,1,0,-1};
 
-const ll MAX_N = 3e5;
-ll N;
-Pii bac[MAX_N];
+const ll MAX_N = 2e5;
+ll n;
+ll a[MAX_N];
 
-bool f(ll k){
-    //部分集合の要素数をk以上にできるか？
-    //これでできる. 
-    //https://gist.github.com/qnighy/825408より. 天才か.
-    priority_queue<ll> ais;
-    ll aisum = 0;
-    REP(i, N){
-        ll ai = bac[i].first;
-        ll bi = bac[i].second;
-        aisum += ai;
-        ais.push(ai);
-        while (aisum > k * bi){
-            aisum -= ais.top();
-            ais.pop();
-        }
-        if (ais.size() >= k) return true;
+void compress(ll *x){
+    //xを座標圧縮
+    vector<ll> xs;
+    REP(i, n) xs.pb(x[i]);
+    SORT(xs);
+    xs.erase(unique(xs.begin(), xs.end()), xs.end());
+    REP(i, n){
+        x[i] = lower_bound(xs.begin(), xs.end(), x[i]) - xs.begin();
     }
-    return false;
+
 }
 
-int main(){
+//BIT
+ll BIT[MAX_N + 1] = {};
+ll sum(ll i){
+    //s = A1 + ... + Ai
+    ll s = 0;
+    while (i > 0){
+        s += BIT[i];
+        i -= i & -i;
+    }
+    return s;
+}
+void add(ll i, ll x){
+    //Ai += x
+    while(i <= n){
+        BIT[i] += x;
+        i += i & -i;
+    }
+}
 
-    //input
-    scanf("%lld", &N);
-    REP(i, N){
-        ll ai, bi;
-        scanf("%lld%lld", &ai, &bi);
-        bac[i] = mp(ai, bi);
+
+int main(){
+    scanf("%lld", &n);
+    REP(i, n) scanf("%lld", &a[i]);
+    compress(a);
+    
+    ll ans = 0;
+    REP(i, n){
+        ans += i - sum(a[i] + 1);
+        add(a[i] + 1, 1);
     }
-    sort(bac, bac + N, [](const Pii &x, const Pii &y) {
-        return (x.second == y.second) ? (x.first < y.first) : (x.second > y.second);
-        });
-    ll k_min = 0, k_max = MAX_N + 1;
-    while (k_max - k_min > 1){
-        ll k_mid = (k_min + k_max) / 2;
-        if (f(k_mid)) {k_min = k_mid;}
-        else k_max = k_mid;
-    }
-    printf("%lld\n", k_min);
+    printf("%lld\n", ans);
+    
 }

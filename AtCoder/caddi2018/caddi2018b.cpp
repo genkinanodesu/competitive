@@ -26,10 +26,21 @@ using namespace std;
 
    #define dump(x) cerr<< #x << "= " << (x) << endl;
 
-   ll gcd(ll a,ll b){return b?gcd(b,a%b):a;};
+   int gcd(int a,int b){return b?gcd(b,a%b):a;};
 
-   ll dx[4]={1,0,-1,0};
-   ll dy[4]={0,1,0,-1};
+   int dx[4]={1,0,-1,0};
+   int dy[4]={0,1,0,-1};
+
+const ll MAX_N = 1000;
+ll N, H, W;
+ll A[MAX_N], B[MAX_N];
 
 int main(){
+  ll ans = 0;
+  cin >> N >> H >> W;
+  REP(i, N){
+    cin >> A[i] >> B[i];
+    if (A[i] >= H && B[i] >= W) ans++;
+  }
+  cout << ans << endl;
 }
