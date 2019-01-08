@@ -33,5 +33,21 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+const ll MAX_N = 1e5;
+ll N;
+ll height[MAX_N];
+ll dp[MAX_N];
+
 int main(){
+  //input
+  cin >> N;
+  REP(i, N){
+    cin >> height[i];
+  }
+  dp[0] = 0;
+  dp[1] = abs(height[1] - height[0]);
+  FOR(i, 2, N){
+    dp[i] = min(dp[i-1] + abs(height[i] - height[i-1]), dp[i-2] + abs(height[i] - height[i-2]));
+  }
+  cout << dp[N - 1] << endl;
 }

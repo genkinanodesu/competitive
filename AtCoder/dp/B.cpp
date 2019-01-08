@@ -32,6 +32,32 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
+const ll MAX_N = 1e5, MAX_K = 100;
+ll N, K;
+ll height[MAX_N];
+
+ll dp[MAX_N];
 
 int main(){
+  //input
+  cin >> N >> K;
+  REP(i, N){
+    cin >> height[i];
+  }
+  //init dptable
+  REP(i, N){
+    dp[i] = INF;
+  }
+  dp[0] = 0;
+  FOR(i, 1, N){
+    FOR(j, 1, K + 1){
+      if (i - j >= 0){
+        chmin(dp[i], dp[i-j] + abs(height[i] - height[i-j]));
+      }
+    }
+  }
+  cout << dp[N-1] << endl;
+
+
+
 }

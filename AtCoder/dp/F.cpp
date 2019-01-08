@@ -33,5 +33,26 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+string s, t;
+const ll MAX_str = 3e3;
+ll dp[MAX_str + 1][MAX_str + 1] = {};
+string dp1[MAX_str+1] = {};
+string dp2[MAX_str+1] = {};
 int main(){
+  cin >> s >> t;
+  REP(i, s.size()){
+    REP(j, t.size()+1) {
+      dp1[j] = dp2[j];
+      dp2[j] = "";
+    }
+    REP(j, t.size()){
+      if (dp2[j].size() > dp1[j+1].size()) dp2[j+1] = dp2[j];
+      else dp2[j+1] = dp1[j+1];
+      if (s[i] == t[j] && dp1[j].size() + 1 > dp2[j+1].size()){
+        dp2[j+1] = dp1[j] + s[i];
+      }
+//      printf("s = %s, t = %s : dp2[%lld] = %s\n", s.substr(0, i + 1).c_str(), t.substr(0, j + 1).c_str(),j+1, dp2[j+1].c_str());
+    }
+  }
+  cout << dp2[t.size()] << endl;
 }

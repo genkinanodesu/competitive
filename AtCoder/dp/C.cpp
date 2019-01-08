@@ -33,5 +33,20 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+const ll MAX_N = 1e5;
+ll N;
+ll a[MAX_N], b[MAX_N], c[MAX_N];
+ll dp[MAX_N + 1][3];
 int main(){
+  cin >> N;
+  REP(i, N){
+    cin >> a[i] >> b[i] >> c[i];
+  }
+  dp[0][0] = dp[0][1] = dp[0][2] = 0;
+  REP(i, N){
+    dp[i + 1][0] = max(dp[i][1], dp[i][2]) + a[i];
+    dp[i + 1][1] = max(dp[i][0], dp[i][2]) + b[i];
+    dp[i + 1][2] = max(dp[i][0], dp[i][1]) + c[i];
+  }
+  cout << max({dp[N][0], dp[N][1], dp[N][2]}) << endl;
 }

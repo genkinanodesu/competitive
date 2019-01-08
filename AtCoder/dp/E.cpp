@@ -33,5 +33,32 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+const ll MAX_N = 100, MAX_W = 1e9, MAX_V = 1e3;
+ll N, W;
+ll wt[MAX_N], vl[MAX_N];
+ll dp[MAX_N + 1][MAX_V * MAX_N + 1];
 int main(){
+  //input
+  cin >> N >> W;
+  REP(i, N){
+    cin >> wt[i] >> vl[i];
+  }
+  REP(i, N + 1){
+    dp[i][0] = 0;
+    FOR(v, 1, MAX_V * MAX_N + 1){
+      dp[i][v] = INF;
+    }
+  }
+  REP(i, N){
+    FOR(v, 1, MAX_V * N + 1){
+      if(v >= vl[i]){
+        dp[i+1][v] = min(dp[i][v-vl[i]] + wt[i], dp[i][v]);
+      }
+      else{
+        dp[i+1][v] = min(wt[i], dp[i][v]);
+      }
+    }
+  }
+  ll ans = upper_bound(dp[N], dp[N] + MAX_V * MAX_N + 1, W) - dp[N] - 1;
+  cout << ans << endl;
 }
