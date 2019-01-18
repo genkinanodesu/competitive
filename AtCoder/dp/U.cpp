@@ -3,8 +3,6 @@ using namespace std;
 
    typedef long long ll;
    typedef pair<ll, ll> Pii;
-   typedef vector<ll> Vi;
-   typedef vector<Vi> VVi;
 
    const double EPS = (1e-7);
    const ll INF =(1e13);
@@ -16,7 +14,6 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
-   #define RSORT(x) sort((x).rbegin(), (x).rend()
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -31,11 +28,34 @@ using namespace std;
 
    ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
    ll pow(ll a, ll b){if (b == 0) return 1; else if (b % 2 == 0) return pow(a * a, b / 2); else return pow(a * a, b / 2) * a;}
-   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
 
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
+const ll MAX_N = 16;
+ll N;
+ll a[MAX_N][MAX_N];
+ll dp[1 << MAX_N] = {};
 
 int main(){
+  cin >> N;
+  REP(i, N){
+    REP(j, N){
+      cin >> a[i][j];
+    }
+  }
+  //init dp-table
+  REP(S, 1 << N){
+    REP(i, N){
+      REP(j, i){
+        if (((S >> i) & 1) & ((S >> j) & 1)) dp[S] += a[i][j];
+      }
+    }
+  }
+  REP(S, 1 << N){
+    for (ll T = S; T!= 0; T = (T -1) & S){
+      chmax(dp[S], dp[T] + dp[~T & S]);
+    }
+  }
+  cout << dp[(1 << N) - 1] << endl;
 }
