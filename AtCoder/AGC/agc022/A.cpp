@@ -3,6 +3,8 @@ using namespace std;
 
    typedef long long ll;
    typedef pair<ll, ll> Pii;
+   typedef vector<ll> Vi;
+   typedef vector<Vi> VVi;
 
    const double EPS = (1e-7);
    const ll INF =(1e13);
@@ -14,6 +16,7 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
+   #define RSORT(x) sort((x).rbegin(), (x).rend()
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -28,33 +31,38 @@ using namespace std;
 
    ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
    ll pow(ll a, ll b){if (b == 0) return 1; else if (b % 2 == 0) return pow(a * a, b / 2); else return pow(a * a, b / 2) * a;}
-
+   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
+   ll residue(ll a, ll m){return ((a % m) + m) % m;};
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-string s, t;
-const ll MAX_str = 3e3;
-ll dp[MAX_str + 1][MAX_str + 1] = {};
-
+string S;
 int main(){
-  cin >> s >> t;
-  REP(i, s.size()){
-    REP(j, t.size()) {
-      dp[i+1][j+1] = max(dp[i][j+1], dp[i+1][j]);
-      if (s[i] == t[j]) chmax(dp[i+1][j+1], dp[i][j] + 1);
-    }
-  }
-  ll i = s.size() - 1, j = t.size() - 1;
-  string ans;
-  while (i >= 0 && j >= 0){
-    if (dp[i + 1][j + 1] == dp[i][j + 1]) i--;
-    else if (dp[i + 1][j + 1] == dp[i + 1][j]) j--;
-    else {
-      ans.insert(ans.begin(), s[i]); 
-      i--;
-      j--;
-    }
-  }
-  cout << ans << endl;
+   cin >> S;
+   if (S.size() < 26){
+      REP(i, 26){
+         if(S.find('a' + i) == -1){
+            S.push_back('a' + i);
+            cout << S << endl;
+            return 0;
+         }
+      }
+   }
+   else if (S == "zyxwvutsrqponmlkjihgfedcba") cout << -1 << endl;
+   else{
+      for(ll i = 25; i > 0; i--){
+         if(S[i] - 'a' > S[i - 1] - 'a'){
+            for(ll j = 25; j >= i; j--){
+               if(S[i - 1] - 'a' < S[j] - 'a'){
+                  S.insert(S.begin() + i - 1, S[j]);
+                  S.erase(S.begin() + i, S.end());
+                  cout << S << endl;
+                  return 0;
+               }
+            }
+
+         }
+      }
+   }
 }

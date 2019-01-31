@@ -3,6 +3,8 @@ using namespace std;
 
    typedef long long ll;
    typedef pair<ll, ll> Pii;
+   typedef vector<ll> Vi;
+   typedef vector<Vi> VVi;
 
    const double EPS = (1e-7);
    const ll INF =(1e13);
@@ -14,6 +16,7 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
+   #define RSORT(x) sort((x).rbegin(), (x).rend()
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -28,33 +31,40 @@ using namespace std;
 
    ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
    ll pow(ll a, ll b){if (b == 0) return 1; else if (b % 2 == 0) return pow(a * a, b / 2); else return pow(a * a, b / 2) * a;}
-
+   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
+   ll residue(ll a, ll m){return ((a % m) + m) % m;};
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
+const ll MAX_N = 100;
+ll N;
+ll x[MAX_N], y[MAX_N], h[MAX_N];
 
-string s, t;
-const ll MAX_str = 3e3;
-ll dp[MAX_str + 1][MAX_str + 1] = {};
-
+ll mdis(ll x1, ll y1, ll x2, ll y2){
+   return abs(x1 - x2) + abs(y1 - y2);
+}
 int main(){
-  cin >> s >> t;
-  REP(i, s.size()){
-    REP(j, t.size()) {
-      dp[i+1][j+1] = max(dp[i][j+1], dp[i+1][j]);
-      if (s[i] == t[j]) chmax(dp[i+1][j+1], dp[i][j] + 1);
-    }
-  }
-  ll i = s.size() - 1, j = t.size() - 1;
-  string ans;
-  while (i >= 0 && j >= 0){
-    if (dp[i + 1][j + 1] == dp[i][j + 1]) i--;
-    else if (dp[i + 1][j + 1] == dp[i + 1][j]) j--;
-    else {
-      ans.insert(ans.begin(), s[i]); 
-      i--;
-      j--;
-    }
-  }
-  cout << ans << endl;
+   cin >> N;
+   REP(i, N) cin >> x[i] >> y[i] >> h[i];
+   ll argmax_h = -1; ll max_h = -1;
+   REP(i, N){
+      if(chmax(max_h, h[i])) argmax_h = i;
+   }
+
+   REP(i, 101){
+      REP(j, 101){
+         ll flag = true;
+         ll height = max_h + mdis(x[argmax_h], y[argmax_h], i, j);
+         REP(k, N){
+            if(h[k] != max(0ll, height - mdis(i, j, x[k], y[k]))){
+               flag = false;
+               break;
+            }
+         }
+         if (flag){
+            printf("%lld %lld %lld\n", i, j, height);
+            return 0;
+         }
+      }
+   }
 }
