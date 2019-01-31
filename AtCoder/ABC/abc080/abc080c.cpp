@@ -16,7 +16,7 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
-   #define RSORT(x) sort((x).rbegin(), (x).rend())
+   #define RSORT(x) sort((x).rbegin(), (x).rend()
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -36,6 +36,28 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-
+const ll MAX_N = 100;
+ll N;
+ll F[MAX_N][10];
+ll P[MAX_N][11];
 int main(){
+   cin >> N;
+   REP(i, N) REP(j, 10) cin >> F[i][j];
+   REP(i, N) REP(j, 11) cin >> P[i][j];
+
+   ll profit = -INF;
+
+   REP(s, (1ll << 10)){
+      if(s == 0) continue;
+      ll temp = 0;
+      REP(i, N){
+         ll c = 0;
+         REP(j, 10){
+            if (F[i][j] & (s >> j)) c++;
+         }
+         temp += P[i][c];
+      }
+      chmax(profit, temp);
+   }
+   cout << profit << endl;
 }

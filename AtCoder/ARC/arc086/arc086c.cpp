@@ -37,5 +37,21 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+ll N, K;
+map<ll, ll> counter;
 int main(){
+   cin >> N >> K;
+   REP(i, N){
+      ll a; cin >> a;
+      counter[a]++;
+   }
+   vector<ll> v;
+   for(auto &e: counter){
+      v.push_back(e.second);
+   }
+   RSORT(v);
+   ll ans = 0;
+   REP(i, min(K, (ll)v.size())) ans += v[i];
+   ans = N - ans;
+   cout << ans << endl;
 }

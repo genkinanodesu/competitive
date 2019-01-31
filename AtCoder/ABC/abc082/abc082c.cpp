@@ -16,7 +16,7 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
-   #define RSORT(x) sort((x).rbegin(), (x).rend())
+   #define RSORT(x) sort((x).rbegin(), (x).rend()
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -37,5 +37,19 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+ll N;
+map<ll, ll> counter;
 int main(){
+   cin >> N;
+   REP(i, N){
+      ll a; cin >> a;
+      counter[a]++;
+   }
+   ll ans = 0;
+   for(auto & e: counter){
+      if (e.second >= e.first) ans += e.second - e.first;
+      else ans += e.second;
+   }
+   cout << ans << endl;
+
 }

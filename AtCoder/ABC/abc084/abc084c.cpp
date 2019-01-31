@@ -16,7 +16,7 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
-   #define RSORT(x) sort((x).rbegin(), (x).rend())
+   #define RSORT(x) sort((x).rbegin(), (x).rend()
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -36,6 +36,25 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
+const ll MAX_N = 500;
+ll N;
+ll C[MAX_N], S[MAX_N], F[MAX_N];
+
+
+ll arrival_time(ll i, ll t){
+   if(i == N - 1){
+      //already arrived
+      return t;
+   }
+   else{
+      ll temp;
+      (t <= S[i]) ? temp = S[i] + C[i] : temp = ((t + F[i] - 1) / F[i]) * F[i] + C[i];
+      return arrival_time(i + 1, temp);
+   }
+}
 
 int main(){
+   cin >> N;
+   REP(i, N - 1) cin >> C[i] >> S[i] >> F[i];
+   REP(i, N) cout << arrival_time(i, 0) << endl;
 }
