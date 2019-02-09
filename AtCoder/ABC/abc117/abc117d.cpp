@@ -2,7 +2,9 @@
 using namespace std;
 
    typedef long long ll;
-   typedef pair<ll, ll> P;
+   typedef pair<ll, ll> Pii;
+   typedef vector<ll> Vi;
+   typedef vector<Vi> VVi;
 
    const double EPS = (1e-7);
    const ll INF =(1e13);
@@ -14,6 +16,7 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
+   #define RSORT(x) sort((x).rbegin(), (x).rend())
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -26,54 +29,31 @@ using namespace std;
 
    #define dump(x) cerr<< #x << "= " << (x) << endl;
 
-   ll gcd(int a,int b){return b?gcd(b,a%b):a;};
+   ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
+   ll pow(ll a, ll b){if (b == 0) return 1; else if (b % 2 == 0) return pow(a * a, b / 2); else return pow(a * a, b / 2) * a;}
+   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
+   ll residue(ll a, ll m){return ((a % m) + m) % m;};
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
+const ll MAX_k_digit = 40, MAX_N = 1e5;
+ll N, K;
+ll a[MAX_N];
+ll c[MAX_k_digit] = {};
 
-ll N;
-vector<ll> Num[2][2][2] = {};
-
-vector<ll> func(vector<ll> v){
-  if (v.empty()) return {0};
-  vector<ll> ans;
-  ans.pb(0);
-  vector<ll> sets[11];
-  sets[0] = {0};
-  REP(d, 10){
-    for (auto &e : sets[d]){
-      for (auto &m : v){
-        if(e * 10 + m <= N){
-          sets[d + 1].pb(e * 10 + m);
-        }
-      }
-    }
-  ans.insert(ans.end(), sets[d + 1].begin(), sets[d + 1].end());
-  }
-  return ans;
-}
 int main(){
-  cin >> N;
-  REP(i, 2){
-    REP(j, 2){
-      REP(k, 2){
-        vector<ll> v = {};
-        if(i == 1) v.pb(3);
-        if(j == 1) v.pb(5);
-        if(k == 1) v.pb(7);
-        Num[i][j][k] = func(v);
-        SORT(Num[i][j][k]);
-//        printf("i = %lld, j = %lld, k = %lld, %lld\n", i, j, k, Num[i][j][k].size());
-      }
+  cin >> N >> K;
+  REP(i, N){
+    cin >> a[i];
+    REP(j, MAX_k_digit){
+      c[j] += ((a[i] >> j) & 1);
     }
   }
-  ll ans = 0;
-  REP(i, 2){
-    REP(j, 2) {
-      REP(k, 2){
-        ans += (((i + j + k) % 2) * 2 - 1) * (Num[i][j][k].size());
-      }
-    }
+  ll dp_true = 0, dp_false = 0;
+  REP(j, MAX_k_digit){
+    ((K >> j) & 1) ? dp_true = max(dp_false + c[j] * (1ll << j), dp_true + (N - c[j]) * (1ll << j)) : dp_true += c[j] * (1ll << j);
+    dp_false += max(c[j], N - c[j]) * (1ll << j);
   }
-  cout << ans << endl;
+  cout << dp_true << endl;
+
 }
