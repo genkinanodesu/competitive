@@ -16,7 +16,7 @@ using namespace std;
    #define FOR(i, a, b) for (ll i = (ll)(a); i < (ll)(b); i++)
    #define ALL(x) (x).begin(),(x).end()
    #define SORT(x) sort((x).begin(), (x).end())
-   #define RSORT(x) sort((x).rbegin(), (x).rend()
+   #define RSORT(x) sort((x).rbegin(), (x).rend())
    #define REVERSE(x) reverse((x).begin(), (x).end())
    #define SZ(x) ((ll)(x).size())
    #define pb push_back
@@ -37,9 +37,24 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+const ll MAX_N = 2e5;
+ll N, M;
+Vi E[MAX_N];
+
 int main(){
-  ll D; cin >> D;
-  cout << "Christmas";
-  REP(i, 25 - D) cout << " Eve";
-  cout << endl;
+   cin >> N >> M;
+   REP(i, M){
+      ll a, b; cin >> a >> b;
+      a--; b--;
+      E[a].pb(b); E[b].pb(a);
+   }
+   REP(i, N) SORT(E[i]);
+   for (auto &e: E[0]){
+      if(binary_search(E[N - 1].begin(), E[N - 1].end(), e)){
+         cout << "POSSIBLE" << endl;
+         return 0;
+      }
+   }
+   cout << "IMPOSSIBLE" << endl;
+   return 0;
 }

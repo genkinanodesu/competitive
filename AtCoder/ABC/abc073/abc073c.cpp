@@ -36,16 +36,18 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
-ll N;
-ll A[MAX_N], B[MAX_N];
 
 int main(){
-  ll N; scanf("%lld", &N);
-  REP(i, N) scanf("%lld%lld", &A[i], &B[i]);
-  ll ans = 0;
-  for(ll i = N - 1; i >= 0; i--){
-    ans += residue(-(A[i] + ans),B[i]);
-  }
-  printf("%lld\n", ans);
+    ll N; cin >> N;
+    map<ll, ll> counter;
+    REP(i, N){
+        ll a; cin >> a;
+        counter[a]++;
+        counter[a] %=2;
+    }
+    ll ans = 0;
+    for(auto &e : counter){
+        ans += e.second;
+    }
+    cout << ans << endl;
 }

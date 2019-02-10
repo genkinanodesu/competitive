@@ -36,16 +36,19 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
-ll N;
-ll A[MAX_N], B[MAX_N];
+
+ll N, M;
 
 int main(){
-  ll N; scanf("%lld", &N);
-  REP(i, N) scanf("%lld%lld", &A[i], &B[i]);
-  ll ans = 0;
-  for(ll i = N - 1; i >= 0; i--){
-    ans += residue(-(A[i] + ans),B[i]);
-  }
-  printf("%lld\n", ans);
+   cin >> N >> M;
+   vector<ll> X(M);
+   REP(i, M) cin >> X[i];
+   SORT(X);
+   ll temp = X[M - 1] - X[0];
+   vector<ll> Y(M - 1);
+   REP(i, M - 1) Y[i] = X[i + 1] - X[i];
+   SORT(Y);
+   ll ans = 0;
+   REP(i, M - N) ans += Y[i];
+   cout << ans << endl;
 }

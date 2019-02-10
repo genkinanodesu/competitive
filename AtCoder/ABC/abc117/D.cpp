@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-   typedef long long ll;
+   typedef  long long ll;
    typedef pair<ll, ll> Pii;
    typedef vector<ll> Vi;
    typedef vector<Vi> VVi;
@@ -34,18 +34,50 @@ using namespace std;
    ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
    ll residue(ll a, ll m){return ((a % m) + m) % m;};
 
-   ll dx[4]={1,0,-1,0};
-   ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
-ll N;
-ll A[MAX_N], B[MAX_N];
-
+//   ll dx[4]={1,0,-1,0};
+ //  ll dy[4]={0,1,0,-1};
+const ll MAX_N = 1e5, MAX_K = 50;
+ll N, K;
+ll A[MAX_N] = {};
+ll B[MAX_K][MAX_N] = {};
+ll C[MAX_K] = {};
+ll s = 0;
+ll log2(ll x){
+   if(x == 1) return 0;
+   return log2(x / 2) + 1;
+}
+ll f_max(ll x){
+   //x以下のfの最大値
+   if (x == 0) return s;
+   if(x + 1 == pow(2, log2(x + 1))){
+      //xが2べき - 1のとき
+      ll ans = 0;
+      REP(j, log2(x) + 1){
+         ans += (1ll << j) * max(C[j], N - C[j]);
+      }
+      FOR(j, log2(x) + 1, 50){
+         ans += (1ll << j) * C[j];
+      }
+      return ans;
+   }
+   else{
+      ll fmax1 = f_max(pow(2, log2(x)) - 1); // 0 - 2^k - 1でのmax
+      ll fmax2 = pow(2, log2(x)) * (N - 2 * C[log2(x)]) + f_max(x - pow(2, log2(x))); // x - 2^kでのmax
+      //printf("fmax1 = %lld, fmax2 = %lld\n", fmax1, fmax2);
+      return max(fmax1, fmax2);   
+   }   
+}
 int main(){
-  ll N; scanf("%lld", &N);
-  REP(i, N) scanf("%lld%lld", &A[i], &B[i]);
-  ll ans = 0;
-  for(ll i = N - 1; i >= 0; i--){
-    ans += residue(-(A[i] + ans),B[i]);
-  }
-  printf("%lld\n", ans);
+   cin >> N >> K;
+   REP(i, N) {
+      cin >> A[i];
+      s += A[i];
+   }
+   REP(j, 50){
+      REP(i, N){
+         B[j][i] = (A[i] >> j) & 1;
+         C[j] += B[j][i];
+      }
+   }
+   cout << f_max(K) << endl;
 }

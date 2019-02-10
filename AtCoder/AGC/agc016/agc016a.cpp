@@ -36,16 +36,27 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
-ll N;
-ll A[MAX_N], B[MAX_N];
 
+string s;
+
+ll shrnk(char c){
+   //すべてをcにするのに最低何回かかるか
+   ll ans = 0;
+   REP(i, s.size()){
+      if(s.find(c, i) == -1) chmax(ans, (ll)(s.size()) - i);
+      else{
+         chmax(ans, (ll)s.find(c, i) - i);
+      }
+   }
+   return ans;
+}
 int main(){
-  ll N; scanf("%lld", &N);
-  REP(i, N) scanf("%lld%lld", &A[i], &B[i]);
-  ll ans = 0;
-  for(ll i = N - 1; i >= 0; i--){
-    ans += residue(-(A[i] + ans),B[i]);
-  }
-  printf("%lld\n", ans);
+   cin >> s;
+   ll ans = INF;
+   REP(i, 26){
+      chmin(ans, shrnk('a' + i));
+//      cout << "shrnk(" << (char)('a' + i) << ") = " << shrnk('a' + i) << endl;
+   }
+   cout << ans << endl;
+
 }

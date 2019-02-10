@@ -31,21 +31,29 @@ using namespace std;
 
    ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
    ll pow(ll a, ll b){if (b == 0) return 1; else if (b % 2 == 0) return pow(a * a, b / 2); else return pow(a * a, b / 2) * a;}
-   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
+   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (a == 0) return 0; else if (b % 2 == 0) return (pow((a * a) % m, b / 2, m) % m); else return (pow((a * a) % m, b / 2, m) * a) % m;}
    ll residue(ll a, ll m){return ((a % m) + m) % m;};
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
-ll N;
-ll A[MAX_N], B[MAX_N];
 
+ll N, C, K;
+Vi T;
 int main(){
-  ll N; scanf("%lld", &N);
-  REP(i, N) scanf("%lld%lld", &A[i], &B[i]);
-  ll ans = 0;
-  for(ll i = N - 1; i >= 0; i--){
-    ans += residue(-(A[i] + ans),B[i]);
-  }
-  printf("%lld\n", ans);
+   cin >> N >> C >> K;
+   T.resize(N);
+   REP(i, N) cin >> T[i];
+   SORT(T);
+   ll ans = 0;
+   ll i = 0;
+   while(i < N){
+      REP(j, C + 1){
+         if((T[i + j] > T[i] + K) || j == C){
+            ans++;
+            i += j;
+            break;
+         }
+      }
+   }
+   cout << ans << endl;
 }

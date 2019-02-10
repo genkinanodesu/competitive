@@ -36,16 +36,26 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
-ll N;
-ll A[MAX_N], B[MAX_N];
 
 int main(){
-  ll N; scanf("%lld", &N);
-  REP(i, N) scanf("%lld%lld", &A[i], &B[i]);
-  ll ans = 0;
-  for(ll i = N - 1; i >= 0; i--){
-    ans += residue(-(A[i] + ans),B[i]);
-  }
-  printf("%lld\n", ans);
+   ll A, B, C, D, E, F; cin >> A >> B >> C >> D >> E >> F;
+
+   ll water = 0, sugar = 0;
+   double cons = -1.0;
+
+   for(ll i = 0; 100 * A * i <= F; i++){
+      for(ll j = 0; 100 * A * i + 100 * B * j <= F; j++){
+         if (i == 0 && j == 0) continue;
+         for(ll k = 0; (C * k <= (A * i + B * j) * E) && (100 * A * i + 100 * B * j + C * k <= F) ; k++){
+            for(ll l = 0; (C * k + D * l <= (A * i + B * j) * E) && (100 * A * i + 100 * B * j + C * k + D * l <= F); l++){
+               if(chmax(cons, (double) (C * k + D * l) / (double) (A * i + B * j))){
+                  water = 100 * A * i + 100 * B * j ;
+                  sugar = C * k + D * l;
+               }
+            }
+         }
+      }
+   }
+   cout << water + sugar << ' ' << sugar << endl;
+
 }

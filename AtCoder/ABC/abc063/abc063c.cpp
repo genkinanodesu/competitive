@@ -36,16 +36,28 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
-ll N;
-ll A[MAX_N], B[MAX_N];
 
+ll N;
+ll s[100];
 int main(){
-  ll N; scanf("%lld", &N);
-  REP(i, N) scanf("%lld%lld", &A[i], &B[i]);
-  ll ans = 0;
-  for(ll i = N - 1; i >= 0; i--){
-    ans += residue(-(A[i] + ans),B[i]);
-  }
-  printf("%lld\n", ans);
+   cin >> N;
+   ll sum = 0;
+   ll flag = true;
+   REP(i, N) {
+      cin >> s[i];
+      sum += s[i];
+      flag = flag && (s[i] % 10 == 0);
+   }
+   if(sum % 10 != 0) cout << sum << endl;
+   else if (flag) cout << 0 << endl;
+   else{
+      sort(s, s + N);
+      REP(i, N){
+         if(s[i] % 10 != 0) {
+            cout << sum - s[i] << endl;
+            return 0;
+         }
+      }
+   }
+
 }
