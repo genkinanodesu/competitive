@@ -37,41 +37,30 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
-      }
-   }
-   return p;
-}
 
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
-      }
-   }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
+   //input
+   ll N, M; cin >> N >> M;
+   Vi T(M), L(M), R(M);
+   REP(i, M) cin >> T[i] >> L[i] >> R[i];
+   
+   //最初はsに1,2,...,Nが入っている
+   set<ll> s = {};
+   REP(i, N) s.insert(i + 1);
+   
    ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
+   REP(i, M){
+      /*これでももちろｎかけるが, 
+      for(auto itr = s.lower_bound(L[M - 1- i]); itr != s.upper_bound(R[M - 1- i]) ; itr++){
+         //cout << *itr << ' ';
+         ans += T[M-1-i];
+      }
+      */
+     //setに対するiteratorはランダムアクセス不可能なので, iter1 - iter2という演算は不可. そのかわりにdistance(iter1, iter2)が使える.
+     ans += distance(s.lower_bound(L[M - 1- i]), s.upper_bound(R[M - 1- i])) * T[M - 1- i];
+//      cout << endl;
+//      ans += (s.upper_bound(R[M-1-i]) - s.lower_bound(L[M-1-i])) * T[M-1-i];
+      s.erase(s.lower_bound(L[M-1-i]), s.upper_bound(R[M-1-i]));
+   }
    cout << ans << endl;
 }

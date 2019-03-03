@@ -37,41 +37,31 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
-      }
-   }
-   return p;
-}
+const ll MAX_N = 1e4;
+ll c[10] = {6, 2, 5, 5, 4, 5, 6, 3, 7, 6};
+string dp[MAX_N + 1];
 
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
+
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
+   ll N, M;
+   cin >> N >> M;
+   Vi A(M);
+   REP(i, M) cin >> A[i];
+   SORT(A);
+
+   REP(i, N + 1) dp[i] = "";
+   REP(j, M) dp[c[A[j]]] = to_string(A[j]);
+
+   REP(i, N){
+      REP(j, M){
+         if(
+            i + 1 >= c[A[j]]
+         && dp[i + 1 - c[A[j]]] != "" 
+         && dp[i + 1 - c[A[j]]].size() + 1 >= dp[i + 1].size()
+         ){
+            dp[i + 1] = to_string(A[j]) + dp[i + 1 - c[A[j]]];
+         }
       }
    }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
-   ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
-   cout << ans << endl;
+   cout << dp[N] << endl;
 }

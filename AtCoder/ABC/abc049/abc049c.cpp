@@ -37,41 +37,32 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
+vector<string> a = {"dream", "dreamer", "erase", "eraser"};
+
+bool hantei(string s){
+   if(s == "") return true;
+   for(auto& e : a){
+      if(s.size() >= e.size() && 
+         s.substr(s.size() - e.size(), e.size()) == e) {
+            return hantei(s.substr(0, s.size() - e.size()));
       }
    }
-   return p;
+   return false;
 }
 
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
+const ll MAX_len = 1e5;
+bool dp[MAX_len + 1] = {};
+
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
+   string S; cin >> S;
+   dp[0] = true;
+   REP(i, S.size() + 1){
+      for(auto &e : a){
+         if(i >= e.size()
+         && S.substr(i - e.size(), e.size()) == e){
+            dp[i] += dp[i - e.size()];
+         }
       }
    }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
-   ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
-   cout << ans << endl;
+   (dp[S.size()]) ? cout << "YES" << endl : cout << "NO" << endl;
 }

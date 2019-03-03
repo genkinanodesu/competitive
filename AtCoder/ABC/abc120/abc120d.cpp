@@ -36,42 +36,46 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
+struct UnionFind {
+  vector<long long> data;
+  UnionFind(long long size) : data(size, -1) { }
+  bool unionSet(long long x, long long y) {
+    x = root(x); y = root(y);
+    if (x != y) {
+      if (data[y] < data[x]) swap(x, y);
+      data[x] += data[y]; data[y] = x;
+    }
+    return x != y;
+  }
+  bool findSet(long long x, long long y) {
+    return root(x) == root(y);
+  }
+  long long root(long long x) {
+    return data[x] < 0 ? x : data[x] = root(data[x]);
+  }
+  long long size(long long x) {
+    return -data[root(x)];
+  }
+};
 
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
-      }
-   }
-   return p;
-}
-
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
+   ll n, m; cin >> n >> m;
+   vector<Pii> v(m); 
+   REP(i, m) {
+      ll a, b; cin >> a >> b; a--; b--;
+      v[m-1-i] = mp(a, b);
+   }
+   UnionFind s(n);
+   Vi ans(m);
+   ans[0] = n * (n-1) / 2;
+   REP(i, m-1){
+      if(s.findSet(v[i].first, v[i].second)) ans[i + 1] = ans[i];
+      else{
+         ans[i+1] = ans[i] - s.size(v[i].first) * s.size(v[i].second);
+         s.unionSet(v[i].first, v[i].second);
       }
    }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
-   ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
-   cout << ans << endl;
+   REP(i, m){
+      cout << ans[m-1-i] << endl;
+   }
 }

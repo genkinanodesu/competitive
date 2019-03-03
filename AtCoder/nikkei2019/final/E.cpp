@@ -37,41 +37,34 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
+const ll MAX_N = 5000;
+ll dp[MAX_N + 1] = {};
+
+ll pow_2[MAX_N + 1];
+
+ll solve(ll n, ll k){
+   if(dp[n] >= 0) return dp[n];
+   if(0 < n && n <= k){dp[n] = 0; return 0;}
+   else{
+      ll ans = pow_2[n - k];
+      FOR(i, 1, n + 1){
+         ans -= solve(i - 1, k) * pow_2[max(0ll, n - i - k)];
+         ans = residue(ans, MOD); 
       }
+      dp[n] = residue(ans, MOD);
+      return dp[n];
    }
-   return p;
 }
 
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
-      }
+   ll N, K; cin >> N >> K;
+   pow_2[0] = 1;
+   REP(i, N + 1){
+      pow_2[i + 1] = (pow_2[i] * pow(2, i + 1, MOD)) % MOD;
    }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
-   ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
-   cout << ans << endl;
+   dp[0] = 1;
+   REP(i, N) dp[i + 1] = -1;
+
+   cout << solve(N, K) << endl;
+
 }

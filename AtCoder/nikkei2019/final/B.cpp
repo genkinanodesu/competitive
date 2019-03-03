@@ -37,41 +37,20 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
-      }
-   }
-   return p;
-}
-
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
-      }
+   ll N, M, K; cin >> N >> M >> K;
+   Vi A(N); REP(i, N) cin >> A[i];
+   Vi B(M); REP(i, M) cin >> B[i];
+   if (N != M){
+      cout << ((N < M) ? "X" : "Y") << endl;
+      return 0;
    }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
-   ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
-   cout << ans << endl;
+
+
+   REP(i, N){
+      if (A[i] == B[i]) continue;
+      cout << ((A[i] < B[i]) ? "X" : "Y") << endl;
+      return 0;
+   }
+   cout << "Same" << endl;
 }

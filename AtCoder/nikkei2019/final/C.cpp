@@ -37,41 +37,33 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
-      }
-   }
-   return p;
-}
-
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
-      }
+   ll H, W, K; cin >> H >> W >> K;
+   Vi a(H, W), b(W, H);
+   REP(i, K){
+      ll ri, ci; cin >> ri >> ci; ri--; ci--;
+      a[ri]--; b[ci]--;
    }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
-   ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
-   cout << ans << endl;
+   //i行目にはa[i]個のコマが, j列目にはb[j]個のコマがある.
+   //累積和を取る
+   Vi a_sum(H + 1, 0), b_sum(W + 1, 0);
+   REP(i, H) a_sum[i+1] = a_sum[i] + a[i];
+   REP(j, W) b_sum[j+1] = b_sum[j] + b[j];
+   
+   ll temp1 = 0, temp2 = 0;
+   REP(i, H) temp1 += i * a[i];
+   REP(j, W) temp2 += j * b[j];
+   ll ans1 = temp1, ans2 = temp2;
+
+   REP(i, H - 1){
+      temp1 += 2 * a_sum[i + 1] - a_sum[H];
+      chmin(ans1, temp1);
+   }
+   REP(j, W-1){
+      temp2 += 2 * b_sum[j + 1] - b_sum[W];
+      chmin(ans2, temp2);
+   }
+   cout << ans1+ans2 << endl;
+
+
 }

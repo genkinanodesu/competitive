@@ -36,42 +36,32 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-
-Vi p_list(ll n){
-   //n以下の素数のリスト
-   Vi a(n + 1, 0);
-   Vi p;
-   FOR(i, 2, n + 1){
-      if(a[i] == 0){
-         p.push_back(i);
-         for(ll j = 2 * i ; j <= n; j += i) a[j]++;
-      }
-   }
-   return p;
-}
-
-ll greater_than(ll n, const Vi& v){
-   //vの要素のうちn以上のものの個数
-   Vi w = v;
-   SORT(w);
-   return (w.end() - lower_bound(w.begin(), w.end(), n));
-}
 int main(){
-   ll n; cin >> n;
-   Vi p = p_list(n);
-   Vi a(p.size(), 0);
-   REP(i, p.size()){
-      ll temp = n / p[i];
-      while(temp > 0){
-         a[i] += temp;
-         temp /= p[i];
+   ll A, B, Q; cin >> A >> B >> Q;
+   Vi s(A + 2), t(B + 2), x(Q);
+   s[0] = -INF, s[A+1] = INF, t[0] = -INF, t[B+1] = INF;
+   REP(i, A) cin >> s[i+1];
+   REP(i, B) cin >> t[i+1];
+   REP(i, Q) cin >> x[i];
+
+   REP(i, Q){
+      ll ans = INF;
+      auto lb_s = lower_bound(s.begin(), s.end(), x[i]);
+      auto lb_t = lower_bound(t.begin(), t.end(), x[i]);
+
+      ll a[2][2];
+      a[0][0] =  *(lb_s - 1);
+      a[0][1] = *lb_s;
+      a[1][0] = *(lb_t - 1);
+      a[1][1] = *lb_t;
+      REP(p, 2){
+         REP(q, 2){
+            REP(r, 2){
+               chmin(ans, abs(x[i] - a[p][q]) + abs(a[p][q] - a[1-p][r]));
+            }
+         }
       }
+      cout << ans << endl;
    }
-//   REP(i, p.size()) printf("p = %lld, ord_p (N!) = %lld\n", p[i], a[i]);
-   ll ans = 0;
-   ans += greater_than(74, a);
-   ans += greater_than(24, a) * (greater_than(2, a) - 1);
-   ans += greater_than(14, a) * (greater_than(4, a) - 1);
-   ans += greater_than(4, a) * (greater_than(4, a) - 1) * (greater_than(2, a) - 2) / 2;
-   cout << ans << endl;
+
 }
