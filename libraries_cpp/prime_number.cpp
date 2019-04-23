@@ -31,44 +31,50 @@ using namespace std;
 
    ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
    ll pow(ll a, ll b){if (b == 0) return 1; else if (b % 2 == 0) return pow(a * a, b / 2); else return pow(a * a, b / 2) * a;}
-   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
+   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (a == 0) return 0; else if (b % 2 == 0) return (pow((a * a) % m, b / 2, m) % m); else return (pow((a * a) % m, b / 2, m) * a) % m;}
    ll residue(ll a, ll m){return ((a % m) + m) % m;};
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-ll bs(ll x, const Vi a, const Vi b){
-  //a + bのうちにx以上の要素がいくつあるか?
-  //a, bはソートずみ
-  ll temp = 0;
-  for(const auto &e : a){
-    temp += b.end() - lower_bound(b.begin(), b.end(), x - e);
-  }
-  return temp;
-}
-int main(){
-  ll x, y, z, k; cin >> x >> y >> z >> k;
-  Vi A(x), B(y), C(z); SORT(A), SORT(B), SORT(C);
-  REP(i, x) cin >> A[i];
-  REP(i, y) cin >> B[i];
-  REP(i, z) cin >> C[i];
+   Vi list_of_primes(ll n){
+     // return list of primes p <= n
+     //primes[i] != 0 iff i is prime.
+     Vi primes(n);
+     FOR(i, 2, n){
+      primes[i] = i;
+     }
+     for (ll i = 2; i*i < n; ++i)
+      if (primes[i])
+        for (ll j = i*i; j < n; j+=i)
+          primes[j] = 0;
+     primes.erase(remove(primes.begin(), primes.end(), 0), primes.end());
+     return primes;
+   }
+   Vi prime_factors(ll n){
+     // return list of prime factors of n.
+     if(n == 1) return {};
+     for(ll i = 2; i * i <= n; i++){
+       if(n % i == 0){
+         Vi ans = prime_factors(n / i);
+         ans.pb(i);
+         sort(ans.begin(), ans.end());
+         ans.erase(unique(ans.begin(), ans.end()), ans.end()); //この行を消せば重複込みの素因数分解を得られる.
+         return ans;
+       }
+     }
+     return {n};
+   }
 
-  Vi AB;
-  REP(i, x){
-    REP(j, y){
-      AB.pb(A[i] + B[j]);
-    }
-  }
-  SORT(AB);
-  REP(k, 20){
-    cout << bs(k, AB, C) << endl;
-  }
-  REP(i, k){
-    ll lb = 0, ub = 4 * 1e15;
-    while(ub - lb > 1){
-      ll mid = (ub + lb) / 2;
-      (bs(mid, AB, C) >= k + 1) ? lb = mid : ub = mid;
-    }
-    cout << lb << endl;
-  }
+int main(){
+  //verify.
+  ll n; cin >> n;
+  Vi P = prime_factors(n);
+  printf("%lldの素因数は：", n);
+  for(auto &p : P) cout << p << ',';
+  cout << endl;
+  printf("%lld未満の素数は：", n);
+  Vi Q = list_of_primes(n);
+  for(auto &q : Q)cout << q << ',';
+  cout << endl;
 }

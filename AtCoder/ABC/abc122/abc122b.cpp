@@ -31,44 +31,26 @@ using namespace std;
 
    ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
    ll pow(ll a, ll b){if (b == 0) return 1; else if (b % 2 == 0) return pow(a * a, b / 2); else return pow(a * a, b / 2) * a;}
-   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (b % 2 == 0) return (pow(a * a, b / 2, m) % m); else return (pow(a * a, b / 2) * a) % m;}
+   ll pow(ll a, ll b, ll m){if (b == 0) return 1; else if (a == 0) return 0; else if (b % 2 == 0) return (pow((a * a) % m, b / 2, m) % m); else return (pow((a * a) % m, b / 2, m) * a) % m;}
    ll residue(ll a, ll m){return ((a % m) + m) % m;};
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-ll bs(ll x, const Vi a, const Vi b){
-  //a + bのうちにx以上の要素がいくつあるか?
-  //a, bはソートずみ
-  ll temp = 0;
-  for(const auto &e : a){
-    temp += b.end() - lower_bound(b.begin(), b.end(), x - e);
-  }
-  return temp;
+bool in_helix(const char& c){
+  if(c == 'A' || c == 'T' || c == 'G' || c == 'C') return true;
+  return false;
 }
 int main(){
-  ll x, y, z, k; cin >> x >> y >> z >> k;
-  Vi A(x), B(y), C(z); SORT(A), SORT(B), SORT(C);
-  REP(i, x) cin >> A[i];
-  REP(i, y) cin >> B[i];
-  REP(i, z) cin >> C[i];
-
-  Vi AB;
-  REP(i, x){
-    REP(j, y){
-      AB.pb(A[i] + B[j]);
+  string s; cin >> s;
+  ll ans = 0, right = 0;
+  for(ll left = 0; left < s.size(); left++){
+    if(left > right) right = left;
+    while(right < s.size()){
+      if(!in_helix(s[right])) break;
+      right++;
     }
+    chmax(ans, right - left);
   }
-  SORT(AB);
-  REP(k, 20){
-    cout << bs(k, AB, C) << endl;
-  }
-  REP(i, k){
-    ll lb = 0, ub = 4 * 1e15;
-    while(ub - lb > 1){
-      ll mid = (ub + lb) / 2;
-      (bs(mid, AB, C) >= k + 1) ? lb = mid : ub = mid;
-    }
-    cout << lb << endl;
-  }
+  cout << ans << endl;
 }
