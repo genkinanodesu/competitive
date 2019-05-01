@@ -44,45 +44,15 @@ using namespace std;
      }
      return true;
    }
-
-   Vi list_of_primes(ll n){
-     // return list of primes p <= n
-     //primes[i] != 0 iff i is prime.
-     Vi primes(n);
-     FOR(i, 2, n){
-      primes[i] = i;
-     }
-     for (ll i = 2; i*i < n; ++i)
-      if (primes[i])
-        for (ll j = i*i; j < n; j+=i)
-          primes[j] = 0;
-     primes.erase(remove(primes.begin(), primes.end(), 0), primes.end());
-     return primes;
-   }
-   Vi prime_factors(ll n){
-     // return list of prime factors of n.
-     if(n == 1) return {};
-     for(ll i = 2; i * i <= n; i++){
-       if(n % i == 0){
-         Vi ans = prime_factors(n / i);
-         ans.pb(i);
-         sort(ans.begin(), ans.end());
-         ans.erase(unique(ans.begin(), ans.end()), ans.end()); //この行を消せば重複込みの素因数分解を得られる.
-         return ans;
-       }
-     }
-     return {n};
-   }
-
 int main(){
   //verify.
   ll n; cin >> n;
-  Vi P = prime_factors(n);
-  printf("%lldの素因数は：", n);
-  for(auto &p : P) cout << p << ',';
-  cout << endl;
-  printf("%lld未満の素数は：", n);
-  Vi Q = list_of_primes(n);
-  for(auto &q : Q)cout << q << ',';
-  cout << endl;
+  Vi a(n);
+  REP(i, n) cin >> a[i];
+  ll cnt = 0;
+  REP(i, n){
+    cnt += is_prime(a[i]);
+  }
+  cout << cnt <<endl;
+
 }
