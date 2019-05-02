@@ -36,35 +36,42 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-const ll MAX_N = 1e5;
+
+const ll MAX_N = 1e5 + 1;
 ll n, m, k;
 struct edge{
-  ll to, from, cost;
-}
+  ll from;
+  ll to;
+  ll dist;
+};
+ll min_dist[MAX_N];
+edge E[MAX_N * 2];
 vector<edge> G[MAX_N];
-map<Pii, ll> d;
+bool reached[MAX_N] = {};
+
+void dfs(const ll& node, const edge& prev){
+  reached[node] = true;
+  for(edge e : G[node]){
+    if(reached[e.to]) continue;
+    (prev.dist == e.dist) ? chmin(min_dist[e.to], min_dist[node]) : chmin(min_dist[e.to], min_dist[node] + 1);
+    dfs(e.to, e);
+  }
+  reached[node] = false;
+}
 int main(){
   cin >> n >> m >> k;
+  REP(i, n) min_dist[i] = INF;
+  min_dist[0] = 0;
+
   REP(i, m){
-    ll a, b, c; cin >> a >> b >> c;
+    ll a, b, c; scanf("%lld%lld%lld", &a, &b, &c);
     a--; b--;
-    G[a].pb(edge{a, b, c});
-    G[b].pb(edge{b, a, c});
-    d[Pii(a, b)] = INF;
-    d[Pii(b, a)] = INF;
+    E[2 * i] = {a, b, c};
+    E[2 * i + 1] = {b, a, c};
+    G[a].pb({a, b, c}); G[b].pb({b, a, c});
   }
-  d[Pii(0, -1)] = 0;
-  typedef pair<pair<ll, Pii>> = P;
-  priority_queue<P, vector<P>, greater<P>> que;
-  que.push(P(0, Pii(0, -1)));
-
-  while(!que.empty()){
-    P p = que.top(); q.pop();
-    ll v = P.second.first;
-    ll prev = P.second.second;
-    if(d[Pii(v, prev)] < p.first) continue;
-    for(edge &e : G[v]){
-
-    }
-  }
+  edge start_edge = {-1, 0, INF};
+  dfs(0, start_edge);
+//  REP(i, n) printf("min_dist[%lld] = %lld\n", i, min_dist[i]);
+  cout << ((min_dist[n - 1] < INF) ? min_dist[n - 1] * k : -1) << endl;
 }
