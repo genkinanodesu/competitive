@@ -71,22 +71,24 @@ using namespace std;
    };
 
 const ll MAX_K = 300;
-ll dist[MAX_K][MAX_K];
-ll depth[MAX_K][MAX_K] = {};
+// ll D[MAX_K][MAX_K];
+// ll d[MAX_K][MAX_K] = {};
+ll node_max;
 
-vector<edge> lost_tree(ll root, const Vi& v){
+vector<edge> lost_tree(ll root, const Vi& nodes, VVi depth){
   // for(auto &i: v) for(auto &j : v) printf("depth[%lld][%lld] = %lld, ", i, j, depth[i][j]);
   // printf("\n");
-  ll x = v.size();
-  if(x == 1){
-    edge e = {root, v[0], depth[v[0]][v[0]]};
-    depth[v[0]][v[0]] == 0;
-    return {e};
-  }
+
+  ll x = nodes.size();
+  if(x == 1) return {};
+  // if(x == 1){
+  //   edge e = {root, v[0], depth[v[0]][v[0]]};
+  //   depth[v[0]][v[0]] == 0;
+  //   return {e};
+  // }
   vector<bool> check(x, false);
   UnionFind uf(x);
   vector<edge> ans = {};
-  ll next_root = root + 1;
   REP(i, x){
     REP(j, x){
       if(depth[i][j] != 0) uf.unionSet(i, j);
@@ -94,32 +96,41 @@ vector<edge> lost_tree(ll root, const Vi& v){
   }
   REP(i, x){
     if(check[i]) continue;
+    if(i == root) {check[i] = true; continue;}
     Vi comp_i = uf.component(i);
     for(auto &j : comp_i) check[j] = true;
-    printf("%lldと共通の根を持つ頂点は", i);
-    for(auto &j : comp_i) printf("%lld, ", j);
-    printf("です.\n");
+    // printf("%lldと共通の根を持つ頂点は", i);
+    // for(auto &j : comp_i) printf("%lld, ", j);
+    // printf("です.\n");
 
     ll min_depth = INF;
     for(auto &j : comp_i) for(auto &k : comp_i) chmin(min_depth, depth[j][k]);
     for(auto &j : comp_i) for(auto &k : comp_i) depth[j][k] -= min_depth;
-    if(min_depth!= 0) ans.pb(edge{root, next_root, min_depth});
-    printf("min_depth = %lld\n", min_depth);
-    vector<edge> t = lost_tree(next_root, comp_i);
-    printf("t.size() = %lld\n", t.size());
+
+    ll next_root = node_max + 1;
+    for(auto &j : comp_i){
+      if(comp_i[j] != root && depth[j][j] == 0) {next_root = comp_i[j]; break;}
+    }
+    ans.pb(edge{root, next_root, min_depth});
+    //printf("min_depth = %lld\n", min_depth);
+    VVi new_depth(comp_i.size(), Vi(comp_i.size()));
+    REP(j, comp_i.size()) REP(k, comp_i.size()) new_depth[j][k] = depth[comp_i[j]][comp_i[k]];
+    vector<edge> t = lost_tree(next_root, comp_i, new_depth);
+    //for(auto &e : t) printf("e.to = %lld, e.from = %lld, e.weight = %lld\n", e.to, e.from, e.weight);
     ans.insert(ans.end(), t.begin(), t.end());
-    next_root++;
+    if(next_root == node_max + 1) node_max++;
   }
   return ans;
 }
 int main(){
-  ll k; cin >> k;
+  ll k; cin >> k; node_max = k - 1;
+  VVi dist(k, Vi(k)), depth(k, Vi(k));
   REP(i, k) REP(j, k) cin >> dist[i][j];
   REP(i, k) depth[i][i] = dist[k - 1][i];
   REP(i, k) REP(j, k) depth[i][j] = (depth[i][i] + depth[j][j] - dist[i][j]) / 2;
-  Vi v(k - 1); REP(i, k- 1) v[i] = i;
-  vector<edge> tree = lost_tree(k - 1, v);
-  cout << tree.size() << endl;
+  Vi v(k); REP(i, k) v[i] = i;
+  vector<edge> tree = lost_tree(k - 1, v, depth);
+  cout << tree.size() + 1 << endl;
   for(auto &e : tree){
     cout << e.to + 1 << ' ' << e.from + 1 << ' ' << e.weight << endl;
   }
