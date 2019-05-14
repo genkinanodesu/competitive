@@ -38,9 +38,32 @@ using namespace std;
    ll dy[4]={0,1,0,-1};
 
    bool is_prime(ll n){
+     //確定的判定法. O(sqrt(n))
      if(n == 1) return false;
      for(ll i = 2; i * i <= n; i++){
        if(n % i == 0) return false;
+     }
+     return true;
+   }
+   bool is_prime_MR(ll n){
+     //Miller-Rabin primary test.
+     if(n == 2) return true;
+     if(n == 1) return false;
+     if(n % 2 == 0) return false;
+     ll d = n - 1;
+     while(d % 2 == 0) d /= 2;
+     ll k = 100; //試行回数
+     REP(i, k){
+        ll a = rand() % (n - 1)  + 1;
+        ll t = d;
+        ll y = pow(a, t, n);
+        while(t != n - 1 && y != -1 && y != n - 1){
+          y = (y * y) % n;
+          t /= 2;
+        }
+        if(y != n - 1 && t % 2 == 0){
+          return false;
+        }
      }
      return true;
    }
@@ -76,13 +99,17 @@ using namespace std;
 
 int main(){
   //verify.
-  ll n; cin >> n;
-  Vi P = prime_factors(n);
-  printf("%lldの素因数は：", n);
-  for(auto &p : P) cout << p << ',';
-  cout << endl;
-  printf("%lld未満の素数は：", n);
-  Vi Q = list_of_primes(n);
-  for(auto &q : Q)cout << q << ',';
-  cout << endl;
+  // ll n; cin >> n;
+  // Vi P = prime_factors(n);
+  // printf("%lldの素因数は：", n);
+  // for(auto &p : P) cout << p << ',';
+  // cout << endl;
+  // printf("%lld未満の素数は：", n);
+  // Vi Q = list_of_primes(n);
+  // for(auto &q : Q)cout << q << ',';
+  // cout << endl;
+  REP(i, 100){
+    ll n = rand() % 200 + 1;
+    cout << n << (is_prime_MR(n) ? "is prime." : "is not prime.") << endl;
+  }
 }
