@@ -37,5 +37,31 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
+ll n;
+VVi G;
+Vi d;
+typedef pair<ll, ll> Result;
+Result visit(ll p, ll v, const VVi &g) {
+  Result r(0, v);
+  for(auto &e : g[v]) if (e != p) {
+    Result t = visit(v, e, g);
+    t.first ++;
+    if (r.first < t.first) r = t;
+  }
+  return r;
+}
+ll diameter(const VVi &g) {
+  Result r = visit(-1, 0, g);
+  Result t = visit(-1, r.second, g);
+  return t.first; // (r.second, t.second) is farthest pair
+}
 int main(){
+  cin >> n;
+  G.assign(n, Vi());
+  REP(i, n - 1){
+    ll a, b; cin >> a >> b; a--; b--;
+    G[a].pb(b); G[b].pb(a);
+  }
+  ll D = diameter(G);
+  cout << ((D % 3 == 1) ? "Second" : "First") << endl;
 }
