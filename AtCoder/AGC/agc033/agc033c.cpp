@@ -37,27 +37,27 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-ll n;
-VVi G;
-Vi d;
-typedef pair<ll, ll> Result;
-Result visit(ll p, ll v, const VVi &g) {
-  Result r(0, v);
-  for(auto &e : g[v]) if (e != p) {
-    Result t = visit(v, e, g);
-    t.first ++;
-    if (r.first < t.first) r = t;
+typedef vector<vector<long long>> Graph ;
+
+Pii farthest(ll p, ll v, const Graph &g){
+  //p:parent v:node g:Graph
+  Pii u = mp(0, v); // weight, node
+  for(auto &e : g[v]){
+    if(e == p) continue;
+    Pii t = farthest(v, e, g);
+    if(t.first  + 1 > u.first) u = mp(t.first + 1, t.second);
   }
-  return r;
+  return u;
 }
-ll diameter(const VVi &g) {
-  Result r = visit(-1, 0, g);
-  Result t = visit(-1, r.second, g);
-  return t.first; // (r.second, t.second) is farthest pair
+
+ll diameter(const Graph &g){
+  Pii u = farthest(-1, 0, g);
+  Pii v = farthest(-1, u.second, g);
+  return v.first;
 }
 int main(){
-  cin >> n;
-  G.assign(n, Vi());
+  ll n; cin >> n;
+  Graph G(n, Vi());
   REP(i, n - 1){
     ll a, b; cin >> a >> b; a--; b--;
     G[a].pb(b); G[b].pb(a);
