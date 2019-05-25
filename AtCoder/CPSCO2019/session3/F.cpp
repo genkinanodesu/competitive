@@ -37,28 +37,24 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 const ll MAX_N = 300 + 1;
-ll dp[MAX_N][MAX_N][MAX_N] = {};
-ll comb[MAX_N][MAX_N] = {};
-
-ll func(ll n, ll a, ll b){
-  if(dp[n][a][b] >= 0) return dp[n][a][b];
-  if(n > a + b){
-    return (comb[n][a + b] * func(n - a - b, a, b)) % MOD;
-  }
-
-}
 ll n, a, b;
+ll dp[MAX_N + 1][MAX_N + 1] = {};
+
+ll binom(ll n, ll m){
+  if(m < 0 || m > n) return 0;
+  ll res = 1;
+  REP(i, n) res = res * (i + 1) % MOD;
+  REP(i, m) res = res * pow(i + 1, MOD - 2, MOD) % MOD;
+  REP(i, n - m) res = res * pow(i + 1, MOD - 2, MOD) % MOD;
+  return res;
+}
 int main(){
   cin >> n >> a >> b;
-  comb[0][0] = 1;
-  REP(i, n){
-    comb[i + 1][0] = 1;
-    REP(j, i + 1){
-      comb[i + 1][j + 1] = (comb[i][j] + comb[i][j + 1]) % MOD;
-    }
+  dp[0][0] = 1;
+  for(ll i = 0; i <= a; i++) for(ll j = 0; j <= b; j++){
+    dp[i + 1][j] += dp[i][j] * j; dp[i + 1][j] %= MOD;
+    dp[i][j + 1] += dp[i][j] * i; dp[i][j + 1] %= MOD;
+    dp[i + 1][j + 1] += dp[i][j] * (i + j + 1); dp[i + 1][j + 1] %= MOD;
   }
-  REP(i, n + 1) REP(j, n + 1) REP(k, n + 1) dp[i][j][k] = -1;
-  dp[0][0][0] = 1, dp[1][0][1] = 0, dp[1][1][0] = 0;
-
-
+  cout << dp[a][b] * binom(n, a + b) % MOD << endl;
 }

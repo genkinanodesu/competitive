@@ -37,42 +37,28 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-const ll MAX_H = 185, MAX_W = 185;
-ll h, w;
-VVi grid, grid_cum;
-vector<vector<vector<vector<ll>>>> dp;
-// bool grid[MAX_H][MAX_W];
-// ll grid_cum[MAX_H + 1][MAX_W + 1] = {};
-// ll dp[MAX_H + 1][MAX_H + 1][MAX_W + 1][MAX_W + 1];
-
-ll complexitiy(ll x1, ll x2, ll y1, ll y2){
-  if(x1 >= x2 || y1 >= y2) return 0;
-  if(dp[x1][x2][y1][y2] >= 0) return dp[x1][x2][y1][y2];
-  ll cnt = grid_cum[x2][y2] - grid_cum[x1][y2] - grid_cum[x2][y1] + grid_cum[x1][y1];
-  if(cnt == 0 || cnt == (x2 - x1) * (y2 - y1)){
-    dp[x1][x2][y1][y2] = 0; return 0;
-  }
-  ll res = INF;
-  for(ll x = x1 + 1; x < x2; x++){
-    chmin(res, max(complexitiy(x1, x, y1, y2), complexitiy(x, x2, y1, y2)) + 1);
-  }
-  for(ll y = y1 + 1; y < y2; y++){
-    chmin(res, max(complexitiy(x1, x2, y1, y), complexitiy(x1, x2, y, y2)) + 1);
-  }
-  dp[x1][x2][y1][y2] = res;
-  return res;
-}
 int main(){
-  cin >> h >> w;
-  grid.assign(h, Vi(w));
-  grid_cum.assign(h + 1, Vi(w + 1, 0));
-  dp.assign(h + 1, vector<VVi>(h + 1, VVi(w + 1, Vi(w + 1, -1))));
-  REP(i, h) REP(j, w){
-    char c; cin >> c;
-    grid[i][j] = ((c == '#') ? true : false);
+  ll m, k; cin >> m >> k;
+  if((1ll << m) <= k){cout << -1 << endl; return 0;}
+  if(m == 1){
+    if(k == 0) cout << "0 0 1 1" << endl;
+    if(k == 1) cout << -1 << endl;
+    return 0;
   }
-  REP(i, h) REP(j, w) grid_cum[i + 1][j + 1] = grid[i][j] + grid_cum[i + 1][j] + grid_cum[i][j + 1] - grid_cum[i][j];
-  REP(i1, h + 1) REP(i2, h + 1) REP(j1, w + 1) REP(j2, w + 1) dp[i1][i2][j1][j2] = -1;
-
-  cout << complexitiy(0, h, 0, w) << endl;
+  Vi a;
+  REP(i, 1ll << m){
+    if(i == k) continue;
+    a.pb(i);
+  }
+  a.pb(k);
+  for(ll i = (1ll << m) - 1; i >= 0; i--){
+    if(i == k) continue;
+    a.pb(i);
+  }
+  a.pb(k);
+  REP(i, a.size()){
+    if(i) cout << ' ';
+    cout << a[i];
+  }
+  cout << endl;
 }

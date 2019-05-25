@@ -37,42 +37,27 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-const ll MAX_H = 185, MAX_W = 185;
-ll h, w;
-VVi grid, grid_cum;
-vector<vector<vector<vector<ll>>>> dp;
-// bool grid[MAX_H][MAX_W];
-// ll grid_cum[MAX_H + 1][MAX_W + 1] = {};
-// ll dp[MAX_H + 1][MAX_H + 1][MAX_W + 1][MAX_W + 1];
+const ll MAX_N = 1e5;
+vector<Pii> G[MAX_N];
+bool color[MAX_N], check[MAX_N] = {};
 
-ll complexitiy(ll x1, ll x2, ll y1, ll y2){
-  if(x1 >= x2 || y1 >= y2) return 0;
-  if(dp[x1][x2][y1][y2] >= 0) return dp[x1][x2][y1][y2];
-  ll cnt = grid_cum[x2][y2] - grid_cum[x1][y2] - grid_cum[x2][y1] + grid_cum[x1][y1];
-  if(cnt == 0 || cnt == (x2 - x1) * (y2 - y1)){
-    dp[x1][x2][y1][y2] = 0; return 0;
+void dfs(ll x, bool b){
+  //xを色bで塗る
+  color[x] = b; check[x] = true;
+  for(auto &e : G[x]){
+    ll y = e.first, w = e.second;
+    if(check[y]) continue;
+    (w % 2 == 0) ? dfs(y, b) : dfs(y, !b);
   }
-  ll res = INF;
-  for(ll x = x1 + 1; x < x2; x++){
-    chmin(res, max(complexitiy(x1, x, y1, y2), complexitiy(x, x2, y1, y2)) + 1);
-  }
-  for(ll y = y1 + 1; y < y2; y++){
-    chmin(res, max(complexitiy(x1, x2, y1, y), complexitiy(x1, x2, y, y2)) + 1);
-  }
-  dp[x1][x2][y1][y2] = res;
-  return res;
 }
-int main(){
-  cin >> h >> w;
-  grid.assign(h, Vi(w));
-  grid_cum.assign(h + 1, Vi(w + 1, 0));
-  dp.assign(h + 1, vector<VVi>(h + 1, VVi(w + 1, Vi(w + 1, -1))));
-  REP(i, h) REP(j, w){
-    char c; cin >> c;
-    grid[i][j] = ((c == '#') ? true : false);
-  }
-  REP(i, h) REP(j, w) grid_cum[i + 1][j + 1] = grid[i][j] + grid_cum[i + 1][j] + grid_cum[i][j + 1] - grid_cum[i][j];
-  REP(i1, h + 1) REP(i2, h + 1) REP(j1, w + 1) REP(j2, w + 1) dp[i1][i2][j1][j2] = -1;
 
-  cout << complexitiy(0, h, 0, w) << endl;
+int main(){
+  ll n; cin >> n;
+  REP(i, n - 1){
+    ll u, v, w; cin >> u >> v >> w; u--; v--;
+    G[u].pb(mp(v, w)); G[v].pb(mp(u, w));
+  }
+  dfs(0, 0);
+  REP(i, n) cout << color[i] << endl;
+
 }
