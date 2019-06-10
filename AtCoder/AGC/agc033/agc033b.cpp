@@ -38,4 +38,26 @@ using namespace std;
    ll dy[4]={0,1,0,-1};
 
 int main(){
+  int h, w, n; cin >> h >> w >> n;
+  int sr, sc; cin >> sr >> sc;
+  string s, t; cin >> s >> t;
+
+  int r1 = sr, r2 = sr, c1 = sc, c2 = sc;
+  REP(i, n){
+    if(s[i] == 'L') c1--;
+    else if(s[i] == 'R') c2++;
+    else if(s[i] == 'U') r1--;
+    else if(s[i] == 'D') r2++;
+
+    if(c1 == 0 || c2 == w + 1 || r1 == 0 || r2 == h + 1){
+      cout << "NO" << endl;
+      return 0;
+    }
+
+    if(t[i] == 'L') c2 = max(1, c2 - 1);
+    else if(t[i] == 'R') c1 = min(w, c1 + 1);
+    else if(t[i] == 'U') r2 = max(1, r2 - 1);
+    else if(t[i] == 'D') r1 = min(h, r1 + 1);
+  }
+  cout << "YES" << endl;
 }

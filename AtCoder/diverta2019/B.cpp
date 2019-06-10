@@ -1,13 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define double long double
 
    typedef long long ll;
    typedef pair<ll, ll> Pii;
    typedef vector<ll> Vi;
    typedef vector<Vi> VVi;
 
-   const double EPS = (1e-10);
+   const double EPS = (1e-7);
    const ll INF =(1e13);
    const double PI = (acos(-1));
    const ll MOD = ll(1e9) + 7;
@@ -38,48 +37,16 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-const ll MAX_N = 1e5;
-ll n, X;
-ll A = 0;
-ll a[MAX_N], x[MAX_N];
-
-double error_ith(ll i, ll x){
-  return abs((double)x / (double)a[i] - (double)X / (double)A);
-}
-
 int main(){
-  //input
-  cin >> n >> X;
-  REP(i, n) {cin >> a[i]; A += a[i];}
-  REP(i, n) x[i] = 0;
-
-  vector<tuple<double, ll, ll>> v; // 変化量, i番目に登場する, 登場回数. vを昇順にソートし, 登場回数の合計をX回にする.
-  REP(i, n){
-    //-EPS * iを足しておくことで, 同じ値に関してはiが大きいほうが昇順で先にくるようにする.
-    ll xi = a[i] * X / A;
-    if(xi * A == a[i] * X){
-      v.pb(make_tuple(-1.0 / (double)a[i] - EPS * i, -i, xi));
-      v.pb(make_tuple( 1.0 / (double)a[i] - EPS * i, -i, X - xi));
-    }
-    else{
-      double e = error_ith(i, xi + 1) - error_ith(i, xi);
-      v.pb(make_tuple(-1.0 / (double)a[i] - EPS * i, -i, xi));
-      v.pb(make_tuple( 1.0 / (double)a[i] - EPS * i, -i, X - xi - 1));
-      v.pb(make_tuple(e - EPS * i, -i, 1));
+  ll r, g, b, n; cin >> r >> g >> b >> n;
+  ll ans = 0;
+  for(ll x = 0; x * r <= n; x++){
+    for(ll y = 0; x * r + y * g <= n; y++){
+      if((n - x * r - y * g) % b == 0) {
+//        printf("x = %lld, y = %lld, z = %lld\n", x, y, (n - x * r -y * g) / b);
+        ans++;
+      }
     }
   }
-  sort(v.begin(), v.end());
-  ll cnt = 0;
-  // for(auto &elem : v){
-  //   double e = get<0>(elem);
-  //   ll i = - get<1>(elem), c = get<2>(elem);
-  //   printf("e = %f, i = %lld, c = %lld\n", e, i, c);
-  // }
-  for(auto &elem : v){
-    if(cnt >= X) break;
-    ll i = - get<1>(elem);
-    x[i] += min(get<2>(elem), X - cnt);
-    cnt = min(X, cnt + get<2>(elem));
-  }
-  REP(i, n) cout << x[i] << endl;
+  cout << ans << endl;
 }

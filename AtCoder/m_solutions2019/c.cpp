@@ -1,13 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define double long double
 
    typedef long long ll;
    typedef pair<ll, ll> Pii;
    typedef vector<ll> Vi;
    typedef vector<Vi> VVi;
 
-   const double EPS = (1e-10);
+   const double EPS = (1e-7);
    const ll INF =(1e13);
    const double PI = (acos(-1));
    const ll MOD = ll(1e9) + 7;
@@ -39,47 +38,33 @@ using namespace std;
    ll dy[4]={0,1,0,-1};
 
 const ll MAX_N = 1e5;
-ll n, X;
-ll A = 0;
-ll a[MAX_N], x[MAX_N];
+ll n, a, b, c;
+ll E[100][100] = {};
+ll comb[MAX_N + 1] = {};
 
-double error_ith(ll i, ll x){
-  return abs((double)x / (double)a[i] - (double)X / (double)A);
+ll expecation(ll x, ll y){
+  if(x >= n || y >= n) return 0;
+  if(E[x][y] > 0) return E[x][y];
+  E[x][y] = pow(a + b, MOD - 2, MOD) * ((100 + a * expecation(x + 1, y) + b * expecation(x, y + 1)) % MOD) % MOD;
+  return E[x][y];
 }
-
-int main(){
-  //input
-  cin >> n >> X;
-  REP(i, n) {cin >> a[i]; A += a[i];}
-  REP(i, n) x[i] = 0;
-
-  vector<tuple<double, ll, ll>> v; // 変化量, i番目に登場する, 登場回数. vを昇順にソートし, 登場回数の合計をX回にする.
+void initcomb(){
+  comb[0] = 1;
   REP(i, n){
-    //-EPS * iを足しておくことで, 同じ値に関してはiが大きいほうが昇順で先にくるようにする.
-    ll xi = a[i] * X / A;
-    if(xi * A == a[i] * X){
-      v.pb(make_tuple(-1.0 / (double)a[i] - EPS * i, -i, xi));
-      v.pb(make_tuple( 1.0 / (double)a[i] - EPS * i, -i, X - xi));
-    }
-    else{
-      double e = error_ith(i, xi + 1) - error_ith(i, xi);
-      v.pb(make_tuple(-1.0 / (double)a[i] - EPS * i, -i, xi));
-      v.pb(make_tuple( 1.0 / (double)a[i] - EPS * i, -i, X - xi - 1));
-      v.pb(make_tuple(e - EPS * i, -i, 1));
-    }
+    comb[i + 1] = ((comb[i] * (n + i)) % MOD) * pow(i + 1, MOD - 2, MOD) % MOD;
   }
-  sort(v.begin(), v.end());
-  ll cnt = 0;
-  // for(auto &elem : v){
-  //   double e = get<0>(elem);
-  //   ll i = - get<1>(elem), c = get<2>(elem);
-  //   printf("e = %f, i = %lld, c = %lld\n", e, i, c);
-  // }
-  for(auto &elem : v){
-    if(cnt >= X) break;
-    ll i = - get<1>(elem);
-    x[i] += min(get<2>(elem), X - cnt);
-    cnt = min(X, cnt + get<2>(elem));
+}
+int main(){
+  cin >> n >> a >> b >> c;
+//  cout << expecation(0, 0) << endl;
+  initcomb();
+  ll p = a * pow(a + b, MOD - 2, MOD) % MOD;
+  ll q = b * pow(a + b, MOD - 2, MOD) % MOD;
+  ll temp1 = 0, temp2 = 0, ans = 0;
+  REP(i, n){
+    temp1 += (i * comb[i] % MOD) * pow(q, i, MOD) % MOD; temp1 %= MOD;
+    temp2 += (i * comb[i] % MOD) * pow(p, i, MOD) % MOD; temp2 %= MOD;
   }
-  REP(i, n) cout << x[i] << endl;
+  ans = ((n + (pow(p, n, MOD) * temp1 % MOD) + (pow(q, n, MOD) * temp2 % MOD)) * 100 % MOD) * pow(100 - c, MOD - 2, MOD) % MOD;
+  cout << ans << endl;
 }

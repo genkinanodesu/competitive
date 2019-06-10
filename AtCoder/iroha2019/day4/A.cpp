@@ -41,37 +41,71 @@ using namespace std;
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
 
-const ll MAX_N = 100;
+const ll MAX_N = 120 ;
 ll n, a, b, c, d;
-ll A[MAX_N], B[MAX_N], C[MAX_N], D[MAX_N];
-ll dp[MAX_N + 1][MAX_N + 1][MAX_N + 1][MAX_N + 1] = {};
+ll score[4][MAX_N];
+bool dp[MAX_N + 1][MAX_N + 1][MAX_N + 1][MAX_N + 1] = {};
+bool check[MAX_N + 1][MAX_N + 1][MAX_N + 1][MAX_N + 1] = {};
 
-ll func(ll n, ll x, ll y, ll z, ll w){
-  if(3 * n != x + y + z + w) return 0;
-  if(x < 0 || x > n
-    || y < 0 || y > n
-    || z < 0 || z > n
-    || w < 0 || w >> n) return 0;
-  if(dp[x][y][z][w] > 0) return dp[x][y][z][w];
-  if(n == 0 && x == 0 && y == 0 && z == 0 && w == 0){
-    dp[0][0][0][0] = 1;
-    return 1;
+bool solve(ll n, Vi x){
+  if(3 * n != x[0] + x[1] + x[2] + x[3]) return false;
+  REP(i, 4){
+    if(x[i] < 0 || x[i] > n) return false;
   }
-  dp[x][y][z][w] = func(n - 1, x - 1, y - 1, z - 1, w) + func(n - 1, x - 1, y - 1, z, w - 1) + func(n - 1, x - 1, y, z - 1, w - 1) + func(n - 1, x, y - 1, z - 1, w - 1);
-  return dp[x][y][z][w];
+  if(check[x[0]][x[1]][x[2]][x[3]]) return dp[x[0]][x[1]][x[2]][x[3]];
+  ll p[4] = {score[0][x[0]], score[1][x[1]], score[2][x[2]], score[3][x[3]]};
+  REP(i, 4){
+    FOR(j, i + 1, 4){
+      FOR(k, j + 1, 4){
+        Vi y = x;
+        y[i]--; y[j]--; y[k]--;
+        if(p[i] != p[j] && p[i] != p[k] && p[j] != p[k]) dp[x[0]][x[1]][x[2]][x[3]] += solve(n - 1, y);
+      }
+    }
+  }
+  check[x[0]][x[1]][x[2]][x[3]] = true;
+  return dp[x[0]][x[1]][x[2]][x[3]];
 }
-
-
-bool solve(){
-  if(a + b + c + d != 3 * n) return false;
-  if(a > n || b > n || c > n || d >> n) return false;
-
+Vi worst(ll n, Vi x){
+  if(n == 0) return {};
+  if(!solve(n, x)) return {};
+  REP(i, 4){
+    FOR(j, i + 1, 4){
+      FOR(k, j + 1, 4){
+        Vi y = x;
+        y[i]--; y[j]--; y[k]--;
+        if(solve(n - 1, y)){
+          Vi tmp = worst(n - 1, y);
+          tmp.pb((0 + 1 + 2 + 3) - i - j - k + 1);
+          return tmp;
+        }
+      }
+    }
+  }
+  return {};
 }
 int main(){
-  cin >> a >> b >> c >> d;
-  REP(i, a) cin >> A[i];
-  REP(i, b) cin >> B[i];
-  REP(i, c) cin >> C[i];
-  REP(i, d) cin >> D[i];
-
+  cin >> n >> a >> b >> c >> d;
+  score[0][0] = -1, score[1][0] = -1, score[2][0] = -1, score[3][0] = -1;
+  REP(i, a) cin >> score[0][i + 1];
+  REP(i, b) cin >> score[1][i + 1];
+  REP(i, c) cin >> score[2][i + 1];
+  REP(i, d) cin >> score[3][i + 1];
+  dp[0][0][0][0] = true;
+  check[0][0][0][0] = true;
+  Vi x = {a, b, c, d};
+ // cout << solve(n, x) << endl;
+ //  REP(i, a + 1){
+ //    REP(j, b + 1){
+ //      REP(k, c + 1){
+ //        REP(l, d + 1){
+ //          printf("dp[%d][%d][%d][%d] = %d\n", i, j, k, l, dp[i][j][k][l]);
+ //        }
+ //      }
+ //    }
+ //  }
+  if(!solve(n, x)) {cout << "No" << endl; return 0;}
+  cout << "Yes" << endl;
+  Vi w = worst(n, x);
+  REP(i, n) cout << w[i] << endl;
 }

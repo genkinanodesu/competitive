@@ -1,13 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define double long double
 
    typedef long long ll;
    typedef pair<ll, ll> Pii;
    typedef vector<ll> Vi;
    typedef vector<Vi> VVi;
 
-   const double EPS = (1e-10);
+   const double EPS = (1e-7);
    const ll INF =(1e13);
    const double PI = (acos(-1));
    const ll MOD = ll(1e9) + 7;
@@ -37,49 +36,39 @@ using namespace std;
 
    ll dx[4]={1,0,-1,0};
    ll dy[4]={0,1,0,-1};
-
-const ll MAX_N = 1e5;
-ll n, X;
-ll A = 0;
-ll a[MAX_N], x[MAX_N];
-
-double error_ith(ll i, ll x){
-  return abs((double)x / (double)a[i] - (double)X / (double)A);
-}
-
+const ll MAX_N = 2000;
+ll d[MAX_N][MAX_N] = {};
+ll n;
 int main(){
-  //input
-  cin >> n >> X;
-  REP(i, n) {cin >> a[i]; A += a[i];}
-  REP(i, n) x[i] = 0;
+  cin >> n;
+  string s; cin >> s;
+  REP(i, n) REP(j, n) {
+    if(i != j) d[i][j] = INF;
+  }
+  REP(i, n - 1){
+    ll a, b; cin >> a >> b; a--; b--;
+    d[a][b] = 1; d[b][a] = 1;
+  }
+  REP(i, n) REP(j, n) REP(k, n) chmin(d[i][j], d[i][k] + d[k][j]);
 
-  vector<tuple<double, ll, ll>> v; // 変化量, i番目に登場する, 登場回数. vを昇順にソートし, 登場回数の合計をX回にする.
+  REP(i, n) REP(j, n){
+    printf("d[%lld][%lld] = %lld\n", i, j, d[i][j]);
+  }
+  ll tmp = 0;
+  REP(i, n) FOR(j, i + 1, n){
+    if(s[i] == '1' && s[j] == '1') tmp += d[i][j];
+  }
+  if(tmp % 2 == 1){
+    cout << -1 << endl;
+    return 0;
+  }
+  ll ans = INF;
   REP(i, n){
-    //-EPS * iを足しておくことで, 同じ値に関してはiが大きいほうが昇順で先にくるようにする.
-    ll xi = a[i] * X / A;
-    if(xi * A == a[i] * X){
-      v.pb(make_tuple(-1.0 / (double)a[i] - EPS * i, -i, xi));
-      v.pb(make_tuple( 1.0 / (double)a[i] - EPS * i, -i, X - xi));
+    ll x = 0;
+    REP(j, n){
+      if(s[j] == '1') x += d[i][j];
     }
-    else{
-      double e = error_ith(i, xi + 1) - error_ith(i, xi);
-      v.pb(make_tuple(-1.0 / (double)a[i] - EPS * i, -i, xi));
-      v.pb(make_tuple( 1.0 / (double)a[i] - EPS * i, -i, X - xi - 1));
-      v.pb(make_tuple(e - EPS * i, -i, 1));
-    }
+    chmin(ans, x / 2);
   }
-  sort(v.begin(), v.end());
-  ll cnt = 0;
-  // for(auto &elem : v){
-  //   double e = get<0>(elem);
-  //   ll i = - get<1>(elem), c = get<2>(elem);
-  //   printf("e = %f, i = %lld, c = %lld\n", e, i, c);
-  // }
-  for(auto &elem : v){
-    if(cnt >= X) break;
-    ll i = - get<1>(elem);
-    x[i] += min(get<2>(elem), X - cnt);
-    cnt = min(X, cnt + get<2>(elem));
-  }
-  REP(i, n) cout << x[i] << endl;
+  cout << ans << endl;
 }
